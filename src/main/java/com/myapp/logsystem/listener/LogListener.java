@@ -1,40 +1,16 @@
 package myapp.logsystem.listener;
-
-import java.util.HashMap;
-
-import java.util.Map;
-
-import myapp.logsystem.persister.BasePersister;
-
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 public class LogListener {
-
-    private final Map<String, BasePersister> persisters = new HashMap<>();
-
-    // Register persisters for log levels
-
-    public void registerPersister(String level, BasePersister persister) {
-
-        persisters.put(level, persister);
-
-    }
-
-    // Process incoming log message
-
-    public void onLog(String level, String message) {
-
-        BasePersister persister = persisters.get(level);
-
-        if (persister != null) {
-
-            persister.persist(message);
-
-        } else {
-
-            System.out.println("⚠️ No persister registered for level: " + level + " | Message: " + message);
-
-        }
-
-    }
-
+   private BlockingQueue<String> logQueue = new LinkedBlockingQueue<>();
+   // Add log entry (called by generator/collector)
+   public void onLogReceived(String log) {
+       logQueue.offer(log);
+   }
+   // Fetch latest log (called by LogCollector)
+   public String getLatestLog() {
+       return logQueue.poll(); // returns and removes the head, or null if empty
+   }
 }
- 
+
+    
