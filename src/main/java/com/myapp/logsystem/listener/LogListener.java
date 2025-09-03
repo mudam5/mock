@@ -1,46 +1,36 @@
 package myapp.logsystem.listener;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.HashMap;
 
-public class LogListener implements Runnable {
+import java.util.Map;
 
-    private final BlockingQueue<String> queue;
+import myapp.logsystem.persister.BasePersister;
 
-    private String latestLog;
+public class LogListener {
 
-    public LogListener(BlockingQueue<String> queue) {
+    private final Map<String, BasePersister> persisters = new HashMap<>();
 
-        this.queue = queue;
+    // Register persisters for log levels
 
-    }
+    public void registerPersister(String level, BasePersister persister) {
 
-    public String getLatestLog() {
-
-        return latestLog;
+        persisters.put(level, persister);
 
     }
 
-    @Override
+    // Process incoming log message
 
-    public void run() {
+    public void onLog(String level, String message) {
 
-        try {
+        BasePersister persister = persisters.get(level);
 
-            while (true) {
+        if (persister != null) {
 
-                String log = queue.take();
+            persister.persist(message);
 
-                if ("STOP".equals(log)) break;
+        } else {
 
-                latestLog = log;
-
-                System.out.println("[Listener] Received: " + log);
-
-            }
-
-        } catch (InterruptedException e) {
-
-            Thread.currentThread().interrupt();
+            System.out.println("⚠️ No persister registered for level: " + level + " | Message: " + message);
 
         }
 
@@ -48,4 +38,3 @@ public class LogListener implements Runnable {
 
 }
  
-
