@@ -1,26 +1,50 @@
-package com.mycompany.logsystem;
-import com.mycompany.logsystem.generator.LogGenerator;
-import com.mycompany.logsystem.listener.LogListener;
-import com.mycompany.logsystem.collector.LogCollector;
-import com.mycompany.logsystem.analyser.LogAnalyser;
+package com.mycompany.logsystem.listener;
+
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-public class MainApplication {
-   public static void main(String[] args) throws InterruptedException {
-       BlockingQueue<String> queue = new LinkedBlockingQueue<>();
-       LogGenerator generator = new LogGenerator(queue);
-       LogListener listener = new LogListener(queue);
-       LogCollector collector = new LogCollector(listener);
-       LogAnalyser analyser = new LogAnalyser(collector);
-       Thread generatorThread = new Thread(generator);
-       Thread listenerThread = new Thread(listener);
-       Thread analyserThread = new Thread(analyser);
-       generatorThread.start();
-       listenerThread.start();
-       analyserThread.start();
-       generatorThread.join();
-       listenerThread.join();
-       analyserThread.join();
-       System.out.println("Log Processing System finished execution.");
-   }
+
+public class LogListener implements Runnable {
+
+    private final BlockingQueue<String> queue;
+
+    private String latestLog;
+
+    public LogListener(BlockingQueue<String> queue) {
+
+        this.queue = queue;
+
+    }
+
+    public String getLatestLog() {
+
+        return latestLog;
+
+    }
+
+    @Override
+
+    public void run() {
+
+        try {
+
+            while (true) {
+
+                String log = queue.take();
+
+                if ("STOP".equals(log)) break;
+
+                latestLog = log;
+
+                System.out.println("[Listener] Received: " + log);
+
+            }
+
+        } catch (InterruptedException e) {
+
+            Thread.currentThread().interrupt();
+
+        }
+
+    }
+
 }
+ 
