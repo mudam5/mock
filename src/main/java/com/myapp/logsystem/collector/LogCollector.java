@@ -1,5 +1,5 @@
 package myapp.logsystem.collector;
-import myapp.logsystem.listener.LogListener;
+import com.myapp.logsystem.listener.LogListener;
 public class LogCollector {
    private LogListener listener;
    public LogCollector(LogListener listener) {
@@ -12,4 +12,5 @@ public class LogCollector {
        }
    }
 }
+
 
