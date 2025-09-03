@@ -1,46 +1,32 @@
 package myapp.logsystem.analyser;
 
-import myapp.logsystem.collector.LogCollector;
+import myapp.logsystem.listener.LogListener;
 
-import myapp.logsystem.persister.*;
+public class LogAnalyser {
 
-public class LogAnalyser implements Runnable {
+    private LogListener listener;
 
-    private final LogCollector collector;
+    public LogAnalyser(LogListener listener) {
 
-    public LogAnalyser(LogCollector collector) {
-
-        this.collector = collector;
+        this.listener = listener;
 
     }
 
-    @Override
+    // Analyse latest log
 
-    public void run() {
+    public String analyse() {
 
-        InfoPersister info = new InfoPersister();
+        String log = listener.getLatestLog();
 
-        WarningPersister warn = new WarningPersister();
+        if (log == null) return "No logs to analyse";
 
-        DebugPersister debug = new DebugPersister();
+        if (log.contains("ERROR")) return "Error detected: " + log;
 
-        ErrorPersister error = new ErrorPersister();
+        if (log.contains("WARN")) return "Warning detected: " + log;
 
-        while (true) {
+        if (log.contains("DEBUG")) return "Debug log: " + log;
 
-            String log = collector.collect();
-
-            if (log == null) continue;
-
-            if (log.startsWith("INFO")) info.persist(log);
-
-            else if (log.startsWith("WARNING")) warn.persist(log);
-
-            else if (log.startsWith("DEBUG")) debug.persist(log);
-
-            else if (log.startsWith("ERROR")) error.persist(log);
-
-        }
+        return "Info log: " + log;
 
     }
 
