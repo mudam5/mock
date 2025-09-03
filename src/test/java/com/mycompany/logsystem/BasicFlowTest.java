@@ -1,0 +1,1 @@
+package com.mycompany.logsystem; public class BasicFlowTest {}
