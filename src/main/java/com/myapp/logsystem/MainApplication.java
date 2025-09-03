@@ -8,7 +8,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
+import java.nio.file.Files;
+
+import java.nio.file.Paths;
+
+import java.util.List;
+
 @SpringBootApplication
+
+@RestController
 
 public class MainApplication {
 
@@ -18,19 +28,25 @@ public class MainApplication {
 
     }
 
-}
-
-@RestController
-
-class LogController {
+    // Endpoint to read logs from logs/app.log
 
     @GetMapping("/logs")
 
-    public String showLogs() {
+    public String getLogs() {
 
-        // For demo: later we can read from your log files
+        String logFile = "logs/app.log"; // relative to project root
 
-        return "Log monitoring system is running!";
+        try {
+
+            List<String> lines = Files.readAllLines(Paths.get(logFile));
+
+            return String.join("<br/>", lines); // return logs with line breaks
+
+        } catch (IOException e) {
+
+            return "Error reading log file: " + e.getMessage();
+
+        }
 
     }
 
