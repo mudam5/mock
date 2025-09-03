@@ -1,6 +1,6 @@
-package myapp.logsystem.persister;
+package com.myapp.logsystem.persister;
 public class ErrorPersister extends BasePersister {
    public ErrorPersister() {
-       super("/var/log/logsystem/error.log");  // ✅ passes file path
+       super("logs/error.log");  // Writes into logs/error.log
    }
 }
