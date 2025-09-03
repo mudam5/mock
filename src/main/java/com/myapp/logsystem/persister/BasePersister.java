@@ -1,4 +1,4 @@
-package com.mycompany.logsystem.persister;
+package myapp.logsystem.persister;
 import java.io.FileWriter;
 import java.io.IOException;
 public abstract class BasePersister {
@@ -10,3 +10,4 @@ public abstract class BasePersister {
        }
    }
 }
+
