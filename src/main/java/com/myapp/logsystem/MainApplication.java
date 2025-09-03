@@ -1,20 +1,8 @@
 package myapp.logsystem;
 
-import myapp.logsystem.collector.LogCollector;
-
-import myapp.logsystem.generator.LogGenerator;
-
 import myapp.logsystem.listener.LogListener;
 
-import myapp.logsystem.persister.DebugPersister;
-
-import myapp.logsystem.persister.ErrorPersister;
-
-import myapp.logsystem.persister.InfoPersister;
-
-import myapp.logsystem.persister.WarningPersister;
-
-import myapp.logsystem.analyser.LogAnalyser;
+import myapp.logsystem.persister.*;
 
 public class MainApplication {
 
@@ -22,7 +10,7 @@ public class MainApplication {
 
         System.out.println("🚀 Log Processing System Started...");
 
-        // Create persisters (writing to /var/log/logsystem/*.log)
+        // Create persisters
 
         InfoPersister infoPersister = new InfoPersister();
 
@@ -44,23 +32,17 @@ public class MainApplication {
 
         listener.registerPersister("ERROR", errorPersister);
 
-        // Collector
+        // Generate some test logs
 
-        LogCollector collector = new LogCollector(listener);
+        listener.onLog("INFO", "System is starting up...");
 
-        // Generator
+        listener.onLog("DEBUG", "Debugging connection pool.");
 
-        LogGenerator generator = new LogGenerator(collector);
+        listener.onLog("WARNING", "Low memory warning.");
 
-        generator.generateSampleLogs();
+        listener.onLog("ERROR", "Database connection failed!");
 
-        // Analyser
-
-        LogAnalyser analyser = new LogAnalyser();
-
-        analyser.analyse("/var/log/logsystem/info.log");
-
-        System.out.println("✅ Logs generated and persisted to /var/log/logsystem/");
+        System.out.println("✅ Logs written under /var/log/logsystem/");
 
     }
 
