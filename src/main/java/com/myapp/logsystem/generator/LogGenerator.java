@@ -1,4 +1,4 @@
-package com.mycompany.logsystem.generator;
+package myapp.logsystem.generator;
 
 import java.util.Random;
 
@@ -48,3 +48,4 @@ public class LogGenerator implements Runnable {
 
 }
  
+
