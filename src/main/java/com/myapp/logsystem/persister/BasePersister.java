@@ -1,17 +1,19 @@
-package myapp.logsystem.persister;
-import java.io.FileWriter;
-import java.io.IOException;
-public abstract class BasePersister {
-   protected String filePath;
-   public BasePersister(String filePath) {
-       this.filePath = filePath;
+public BasePersister(String fileName) {
+       // Create a local "logs" directory inside project folder
+       String logDir = "./logs";
+       try {
+           Files.createDirectories(Paths.get(logDir));
+       } catch (IOException e) {
+           e.printStackTrace();
+       }
+       this.logFilePath = logDir + "/" + fileName;
    }
-   public void persist(String message) {
-       try (FileWriter fw = new FileWriter(filePath, true)) {
-           fw.write(message + System.lineSeparator());
+   protected void writeToFile(String logLevel, String message) {
+       try (BufferedWriter writer = new BufferedWriter(new FileWriter(logFilePath, true))) {
+           writer.write("[" + logLevel + "] " + message);
+           writer.newLine();
        } catch (IOException e) {
            e.printStackTrace();
        }
    }
 }
-
