@@ -1,6 +1,6 @@
-package myapp.logsystem.persister;
+package com.myapp.logsystem.persister;
 public class DebugPersister extends BasePersister {
    public DebugPersister() {
-       super("/var/log/logsystem/debug.log");  // ✅ passes file path
+       super("logs/debug.log");  // Writes into logs/debug.log
    }
 }
