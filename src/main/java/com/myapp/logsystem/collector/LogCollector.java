@@ -1,5 +1,5 @@
-package com.mycompany.logsystem.collector;
-import com.mycompany.logsystem.listener.LogListener;
+package myapp.logsystem.collector;
+import myapp.logsystem.listener.LogListener;
 public class LogCollector {
    private final LogListener listener;
    public LogCollector(LogListener listener) {
@@ -9,3 +9,4 @@ public class LogCollector {
        return listener.getLatestLog();
    }
 }
+
