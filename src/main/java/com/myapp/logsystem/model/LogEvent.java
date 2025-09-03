@@ -1,4 +1,4 @@
-package com.mycompany.logsystem.model;
+package myapp.logsystem.model;
 
 import java.time.LocalDateTime;
 
