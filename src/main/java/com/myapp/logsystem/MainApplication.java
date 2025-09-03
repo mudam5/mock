@@ -2,33 +2,93 @@ package com.myapp.logsystem;
 
 import com.myapp.logsystem.listener.LogListener;
 
-import com.myapp.logsystem.persister.*;
+import com.myapp.logsystem.analyser.LogAnalyser;
+
+import com.myapp.logsystem.collector.LogCollector;
+
+import java.io.FileWriter;
+
+import java.io.IOException;
+
+import java.nio.file.Files;
+
+import java.nio.file.Paths;
+
+import java.util.concurrent.ArrayBlockingQueue;
+
+import java.util.concurrent.BlockingQueue;
 
 public class MainApplication {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
-        LogListener listener = new LogListener();
+        // Ensure logs directory exists
 
-        // Register persisters for each log type
+        Files.createDirectories(Paths.get("logs"));
 
-        listener.registerPersister("INFO", new InfoPersister("logs/info.log"));
+        // Queue for passing logs
 
-        listener.registerPersister("ERROR", new ErrorPersister("logs/error.log"));
+        BlockingQueue<String> logQueue = new ArrayBlockingQueue<>(100);
 
-        listener.registerPersister("WARNING", new WarningPersister("logs/warning.log"));
+        // Listener will push logs into queue
 
-        listener.registerPersister("DEBUG", new DebugPersister("logs/debug.log"));
+        LogListener listener = new LogListener(logQueue);
 
-        // Test logs
+        // Components
 
-        listener.onLog("INFO", "System started successfully.");
+        LogAnalyser analyser = new LogAnalyser(listener);
 
-        listener.onLog("ERROR", "Unable to connect to database.");
+        LogCollector collector = new LogCollector(listener);
 
-        listener.onLog("WARNING", "Disk space is running low.");
+        // Thread for persisting logs
 
-        listener.onLog("DEBUG", "Checking configuration values...");
+        Thread persisterThread = new Thread(() -> {
+
+            try (FileWriter writer = new FileWriter("logs/app.log", true)) {
+
+                while (true) {
+
+                    String log = logQueue.take(); // wait until a log arrives
+
+                    writer.write(log + System.lineSeparator());
+
+                    writer.flush();
+
+                }
+
+            } catch (IOException | InterruptedException e) {
+
+                e.printStackTrace();
+
+            }
+
+        });
+
+        persisterThread.setDaemon(true); // exit when main exits
+
+        persisterThread.start();
+
+        // Simulate logs
+
+        collector.collect("INFO - Application started");
+
+        collector.collect("DEBUG - Debugging mode enabled");
+
+        collector.collect("WARN - Low memory warning");
+
+        collector.collect("ERROR - Something went wrong");
+
+        // Analyse logs
+
+        analyser.analyse("INFO - User login success");
+
+        analyser.analyse("DEBUG - Debug details");
+
+        analyser.analyse("WARN - Disk almost full");
+
+        analyser.analyse("ERROR - Database connection failed");
+
+        System.out.println("Logs are being written into logs/app.log");
 
     }
 
