@@ -1,10 +1,10 @@
-package myapp.logsystem.analyser;
+package com.myapp.logsystem.analyser;
 
-import myapp.logsystem.listener.LogListener;
+import com.myapp.logsystem.listener.LogListener;
 
 public class LogAnalyser {
 
-    private LogListener listener;
+    private final LogListener listener;
 
     public LogAnalyser(LogListener listener) {
 
@@ -12,21 +12,25 @@ public class LogAnalyser {
 
     }
 
-    // Analyse latest log
+    public void analyse(String log) {
 
-    public String analyse() {
+        if (log.contains("ERROR")) {
 
-        String log = listener.getLatestLog();
+            listener.onLog("ERROR detected: " + log);
 
-        if (log == null) return "No logs to analyse";
+        } else if (log.contains("WARN")) {
 
-        if (log.contains("ERROR")) return "Error detected: " + log;
+            listener.onLog("WARNING detected: " + log);
 
-        if (log.contains("WARN")) return "Warning detected: " + log;
+        } else if (log.contains("INFO")) {
 
-        if (log.contains("DEBUG")) return "Debug log: " + log;
+            listener.onLog("INFO detected: " + log);
 
-        return "Info log: " + log;
+        } else if (log.contains("DEBUG")) {
+
+            listener.onLog("DEBUG detected: " + log);
+
+        }
 
     }
 
