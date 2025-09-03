@@ -1,20 +1,16 @@
-package myapp.logsystem.listener;
+package com.myapp.logsystem.listener;
 
-import myapp.logsystem.persister.BasePersister;
+import com.myapp.logsystem.persister.BasePersister;
 
-import java.util.*;
+import java.util.HashMap;
 
-import java.util.concurrent.BlockingQueue;
-
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.Map;
 
 public class LogListener {
 
-    private BlockingQueue<String> logQueue = new LinkedBlockingQueue<>();
+    private final Map<String, BasePersister> persisters = new HashMap<>();
 
-    private Map<String, BasePersister> persisters = new HashMap<>();
-
-    // Add persister for a specific log level
+    // Register different persisters (Info, Error, Warning, Debug, etc.)
 
     public void registerPersister(String level, BasePersister persister) {
 
@@ -22,34 +18,23 @@ public class LogListener {
 
     }
 
-    // Handle log entry (called from MainApplication / generators)
+    // Handle incoming log messages
 
     public void onLog(String level, String message) {
 
-        String log = "[" + level.toUpperCase() + "] " + message;
+        BasePersister persister = persisters.get(level.toUpperCase());
 
-        logQueue.offer(log);
+        if (persister != null) {
 
-        // Send to persister if available
+            persister.persist(message);
 
-        BasePersister p = persisters.get(level.toUpperCase());
+        } else {
 
-        if (p != null) {
-
-            p.persist(log);
+            System.out.println("[UNHANDLED] " + message);
 
         }
 
     }
 
-    // Get latest log (used by collector/analyser)
-
-    public String getLatestLog() {
-
-        return logQueue.poll();
-
-    }
-
 }
  
-    
