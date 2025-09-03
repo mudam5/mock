@@ -4,45 +4,47 @@ import myapp.logsystem.listener.LogListener;
 
 import myapp.logsystem.persister.*;
 
+import myapp.logsystem.collector.LogCollector;
+
+import myapp.logsystem.analyser.LogAnalyser;
+
 public class MainApplication {
 
     public static void main(String[] args) {
 
-        System.out.println("🚀 Log Processing System Started...");
-
-        // Create persisters
-
-        InfoPersister infoPersister = new InfoPersister();
-
-        WarningPersister warningPersister = new WarningPersister();
-
-        DebugPersister debugPersister = new DebugPersister();
-
-        ErrorPersister errorPersister = new ErrorPersister();
-
-        // Listener
-
         LogListener listener = new LogListener();
 
-        listener.registerPersister("INFO", infoPersister);
+        // Register persisters
 
-        listener.registerPersister("WARNING", warningPersister);
+        listener.registerPersister("INFO", new InfoPersister());
 
-        listener.registerPersister("DEBUG", debugPersister);
+        listener.registerPersister("WARN", new WarningPersister());
 
-        listener.registerPersister("ERROR", errorPersister);
+        listener.registerPersister("DEBUG", new DebugPersister());
 
-        // Generate some test logs
+        listener.registerPersister("ERROR", new ErrorPersister());
 
-        listener.onLog("INFO", "System is starting up...");
+        // Push logs
 
-        listener.onLog("DEBUG", "Debugging connection pool.");
+        listener.onLog("INFO", "Application started");
 
-        listener.onLog("WARNING", "Low memory warning.");
+        listener.onLog("DEBUG", "Debugging connection issue");
 
-        listener.onLog("ERROR", "Database connection failed!");
+        listener.onLog("WARN", "Low disk space");
 
-        System.out.println("✅ Logs written under /var/log/logsystem/");
+        listener.onLog("ERROR", "NullPointerException occurred");
+
+        // Collect logs
+
+        LogCollector collector = new LogCollector(listener);
+
+        collector.collect();
+
+        // Analyse logs
+
+        LogAnalyser analyser = new LogAnalyser(listener);
+
+        System.out.println(analyser.analyse());
 
     }
 
