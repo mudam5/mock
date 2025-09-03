@@ -1,16 +1,11 @@
-package myapp.logsystem.collector;
+package com.myapp.logsystem.collector;
 import com.myapp.logsystem.listener.LogListener;
 public class LogCollector {
-   private LogListener listener;
+   private final LogListener listener;
    public LogCollector(LogListener listener) {
        this.listener = listener;
    }
-   public void collect() {
-       String log = listener.getLatestLog();  // ✅ now compiles
-       if (log != null) {
-           System.out.println("Collected log: " + log);
-       }
+   public void collect(String log) {
+       listener.onLog(log);
    }
 }
-
-
