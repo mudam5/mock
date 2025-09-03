@@ -1,12 +1,8 @@
-package myapp.logsystem;
+package com.myapp.logsystem;
 
-import myapp.logsystem.listener.LogListener;
+import com.myapp.logsystem.listener.LogListener;
 
-import myapp.logsystem.persister.*;
-
-import myapp.logsystem.collector.LogCollector;
-
-import myapp.logsystem.analyser.LogAnalyser;
+import com.myapp.logsystem.persister.*;
 
 public class MainApplication {
 
@@ -14,37 +10,25 @@ public class MainApplication {
 
         LogListener listener = new LogListener();
 
-        // Register persisters
+        // Register persisters for each log type
 
-        listener.registerPersister("INFO", new InfoPersister());
+        listener.registerPersister("INFO", new InfoPersister("logs/info.log"));
 
-        listener.registerPersister("WARN", new WarningPersister());
+        listener.registerPersister("ERROR", new ErrorPersister("logs/error.log"));
 
-        listener.registerPersister("DEBUG", new DebugPersister());
+        listener.registerPersister("WARNING", new WarningPersister("logs/warning.log"));
 
-        listener.registerPersister("ERROR", new ErrorPersister());
+        listener.registerPersister("DEBUG", new DebugPersister("logs/debug.log"));
 
-        // Push logs
+        // Test logs
 
-        listener.onLog("INFO", "Application started");
+        listener.onLog("INFO", "System started successfully.");
 
-        listener.onLog("DEBUG", "Debugging connection issue");
+        listener.onLog("ERROR", "Unable to connect to database.");
 
-        listener.onLog("WARN", "Low disk space");
+        listener.onLog("WARNING", "Disk space is running low.");
 
-        listener.onLog("ERROR", "NullPointerException occurred");
-
-        // Collect logs
-
-        LogCollector collector = new LogCollector(listener);
-
-        collector.collect();
-
-        // Analyse logs
-
-        LogAnalyser analyser = new LogAnalyser(listener);
-
-        System.out.println(analyser.analyse());
+        listener.onLog("DEBUG", "Checking configuration values...");
 
     }
 
