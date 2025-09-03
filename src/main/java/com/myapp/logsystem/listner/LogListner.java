@@ -1,4 +1,4 @@
-package com.mycompany.logsystem.listener;
+package myapp.logsystem.listener;
 
 import java.util.concurrent.BlockingQueue;
 
@@ -48,3 +48,4 @@ public class LogListener implements Runnable {
 
 }
  
+
